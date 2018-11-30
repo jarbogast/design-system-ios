@@ -159,11 +159,21 @@ static NSMutableDictionary *iconCache = nil;
         iconCache = [[NSMutableDictionary alloc] init];
     }
 
+    size_t numFgComps = CGColorGetNumberOfComponents(iconColor.CGColor);
     CGFloat const *fgComps = CGColorGetComponents(iconColor.CGColor);
+    
+    size_t numBgComps = CGColorGetNumberOfComponents(bgColor.CGColor);
     CGFloat const * bgComps = CGColorGetComponents(bgColor.CGColor);
-    NSString *iconKey = [NSString stringWithFormat:@"%ld%f%f%f%f%f%f%f%f%f", (long)iconType,
-        fgComps[0], fgComps[1], fgComps[2], fgComps[3],
-        bgComps[0], bgComps[1], bgComps[2], bgComps[3], size];
+    
+    NSMutableString *iconKey = [NSMutableString stringWithFormat:@"%ld", (long)iconType];
+    for (int i=0; i < numFgComps; i++) {
+        [iconKey appendFormat:@"%f", fgComps[i]];
+    }
+    for (int i=0; i < numBgComps; i++) {
+        [iconKey appendFormat:@"%f", bgComps[i]];
+    }
+    [iconKey appendFormat:@"%f", size];
+    
     UIImage * icon = [iconCache objectForKey:iconKey];
 
     if ( icon != nil ) {
